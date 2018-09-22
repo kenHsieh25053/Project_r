@@ -33,7 +33,7 @@ class Bookinfo_spider(scrapy.Spider):
         localtime = datetime.now().strftime('%Y-%m-%d')
         publish_time = sel.xpath(
             '//ul/li/span/text()[2]').re(r'，出版日期：(\d+-\d+-\d+)')
-        link = sel.css('h4 a::attr(href)').extract()
+        link = sel.css('h4 a::attr(href)').extract()[:20]
         for pu, li in zip(publish_time, link):
             # 判斷該書出版日期是否小於現在日期，如果小於則爬取該書籍URL
             if pu < localtime:
@@ -42,8 +42,8 @@ class Bookinfo_spider(scrapy.Spider):
 
         # 當頁爬完後，自動換到下一頁
         # next_page_url = sel.css(".page a.nxt::attr('href')").extract()
-        next_page_url = 'https://www.books.com.tw/web/sys_bbotm/books/010101/?o=1&v=1&page=2'
-        yield scrapy.Request(next_page_url, callback=self.parse)
+        # next_page_url = 'https://www.books.com.tw/web/sys_bbotm/books/010101/?o=1&v=1&page=2'
+        # yield scrapy.Request(next_page_url, callback=self.parse)
     
     # 爬取書籍相關資料
     def parse_bookinfo(self, response):
@@ -148,11 +148,17 @@ class Bookinfo_spider(scrapy.Spider):
             bookinfo['author_fore'] = []
         bookinfo['author_fore'] = author_fore
         author_intro = sel.xpath(
-                "//div[4]/div/div[3]/div[1]/div[2]/div/div[1]/strong[text()='譯者簡介']/preceding-sibling::text()").extract()
+            "//div[@class='mod_b type02_m057 clearfix'][2]/div[@class='bd']/div[@class='content']/strong[text()='譯者簡介']/preceding-sibling::text()").extract()
         # 判斷如果作者介紹結果為空則換從譯者簡介<b>定位抓取面上資料
-        # if len(author_intro) == 0:
-        #     author_intro = sel.xpath(
-        #         "//div[4]/div/div[3]/div[1]/div[2]/div/div[1]/b[text()='譯者簡介']/preceding-sibling::text()").extract()
+        if len(author_intro) == 0:
+            author_intro = sel.xpath(
+                "//div[@class='mod_b type02_m057 clearfix'][2]/div[@class='bd']/div[@class='content']/b[text()='譯者簡介']/preceding-sibling::text()").extract()
+            bookinfo['author_intro'] = author_intro
+        # 判斷如果作者介紹結果還是為空則從作者簡介定位抓取下面資料
+        if len(author_intro) == 0:
+            author_intro = sel.xpath(
+                "//div[@class='mod_b type02_m057 clearfix'][2]/div[@class='bd']/div[@class='content']/b[text()='作者簡介']/following-sibling::text()").extract()
+            bookinfo['author_intro'] = author_intro
         bookinfo['author_intro'] = author_intro
         # 爬取譯者相關資料
         translator_name = sel.xpath(
@@ -174,12 +180,12 @@ class Bookinfo_spider(scrapy.Spider):
         else:
             bookinfo['translator_name'] = translator_name
         translator_intro = sel.xpath(
-            "//div[4]/div/div[3]/div[1]/div[2]/div/div[1]/strong[text()='譯者簡介']/following-sibling::text()").extract()
+            "//div[@class='mod_b type02_m057 clearfix'][2]/div[@class='bd']/div[@class='content']/strong[text()='譯者簡介']/following-sibling::text()").extract()
         # 判斷如果譯者介紹結果為空則換從譯者名稱<b>定位抓取下面資料
-        # if len(translator_intro) == 0:
-        #     translator_intro = sel.xpath(
-        #         "//div[4]/div/div[3]/div[1]/div[2]/div/div[1]/b[text()='譯者簡介']/following-sibling::text()").extract()
-        #     bookinfo['translator_intro'] = translator_intro
+        if len(translator_intro) == 0:
+            translator_intro = sel.xpath(
+                "//div[@class='mod_b type02_m057 clearfix'][2]/div[@class='bd']/div[@class='content']/b[text()='譯者簡介']/following-sibling::text()").extract()
+            bookinfo['translator_intro'] = translator_intro
         bookinfo['translator_intro'] = translator_intro
         # 返回書籍list
         yield bookinfo
