@@ -21,6 +21,7 @@ import debug_toolbar
 
 urlpatterns = [
     path(r'__debug__/', include(debug_toolbar.urls)),
+    path(r'docs/', include('rest_framework_docs.urls')),
     path(r'accounts/', include('allauth.urls')),
     path('grappelli/', include('grappelli.urls')),  # grappelli URLS
     path('admin/', admin.site.urls),
