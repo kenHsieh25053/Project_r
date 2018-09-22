@@ -1,4 +1,6 @@
 from django.db import models
+import django_filters
+# from django_filters import rest_framework as filters
 
 # Create your models here.
 
@@ -22,7 +24,7 @@ class Bookinfo(models.Model):
     pub_category = models.CharField(max_length=20, verbose_name='出版社分類')
     first_category = models.CharField(max_length=20, verbose_name='分類第一層')
     second_category = models.CharField(max_length=20, verbose_name='分類第二層')
-    thrid_category = models.CharField(max_length=20, verbose_name='分類第三層')
+    third_category = models.CharField(max_length=20, verbose_name='分類第三層')
     spec = models.CharField(max_length=50, verbose_name='書籍規格')
     lang = models.CharField(max_length=15, verbose_name='書籍語言')
     content = models.TextField(verbose_name='書籍內容')
@@ -39,6 +41,13 @@ class Bookinfo(models.Model):
             return self.book_name_fore
         else:
             return self.book_name_ch
+
+# 書籍資料篩選器
+class BookinfoFilter(django_filters.FilterSet):
+    class Meta:
+        model = Bookinfo
+        fields = ['book_name_ch', 'publisher',
+                  'first_category', 'second_category', 'third_category']
 
 # 作者資訊資料表
 class Authors(models.Model):
@@ -63,6 +72,12 @@ class Authors(models.Model):
         else:
             return self.author_ch
 
+# 作者資料篩選器
+class AuthorsFilter(django_filters.FilterSet):
+    class Meta:
+        model = Authors
+        fields = ['author_ch', 'author_fore']
+
 # 譯者資訊資料表
 class Translators(models.Model):
     class Meta(object):
@@ -79,3 +94,9 @@ class Translators(models.Model):
     # 回傳譯者名稱用於admin和terminal顯示
     def __str__(self):
         return self.translator_name
+
+# 譯者資料篩選器
+class TranslatorsFilter(django_filters.FilterSet):
+    class Meta:
+        model = Translators
+        fields = ['translator_name']
