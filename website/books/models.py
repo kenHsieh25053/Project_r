@@ -1,8 +1,7 @@
 from django.db import models
 import django_filters
-# from django_filters import rest_framework as filters
+# from django_filters import rest_framework
 
-# Create your models here.
 
 # 書籍資訊資料表
 class Bookinfo(models.Model):

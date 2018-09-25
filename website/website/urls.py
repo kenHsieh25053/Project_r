@@ -17,11 +17,23 @@ from django.contrib import admin
 from django.urls import include, path
 from django.conf import settings
 import debug_toolbar
+from django.contrib.auth.models import User
+from rest_framework import routers
+from books.views import BookinfoViewset, AuthorsViewset, TranslatorsViewset, UserViewSet
 
+
+# Routers provide an easy way of automatically determining the URL conf.
+router = routers.DefaultRouter()
+router.register(r'users', UserViewSet)
+router.register(r'bookinfo', BookinfoViewset)
+router.register(r'authors', AuthorsViewset)
+router.register(r'translators', TranslatorsViewset)
 
 urlpatterns = [
     path(r'__debug__/', include(debug_toolbar.urls)),
-    path(r'docs/', include('rest_framework_docs.urls')),
+    # path(r'docs/', include('rest_framework_docs.urls')),
+    path(r'', include(router.urls)),
+    path(r'api-auth/', include('rest_framework.urls')),
     path(r'accounts/', include('allauth.urls')),
     path('grappelli/', include('grappelli.urls')),  # grappelli URLS
     path('admin/', admin.site.urls),

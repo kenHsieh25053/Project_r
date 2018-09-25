@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
-    'rest_framework_docs',
+    # 'rest_framework_docs',
     'books',
     'users',
 ]
@@ -67,6 +67,15 @@ MIDDLEWARE = [
 ]
 
 INTERNAL_IPS = ('127.0.0.1',)
+
+# 配置django_rest_framework
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'
+    ]
+}
 
 # 配置JQuery和SHOW_TOOLBAR_​​CALLBACK
 DEBUG_TOOLBAR_CONFIG = {
