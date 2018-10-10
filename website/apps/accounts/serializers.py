@@ -9,4 +9,4 @@ class CommentsSerializer(serializers.ModelSerializer):
 class BookshelfSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bookshelf
-        fields = ('_id', 'created_time', 'bookinfo', 'user')
+        fields = ('_id', 'created_time', 'updated_at', 'bookinfo', 'user')

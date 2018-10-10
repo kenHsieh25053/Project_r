@@ -95,6 +95,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     # A timestamp reprensenting when this object was last updated.
     updated_at = models.DateTimeField(auto_now=True)
 
+    #  Using uuid.uuid4() to auto-fill it with a random secret whenever we create a new user.
+    jwt_secret = models.UUIDField(default=uuid.uuid4)
+    
     # More fields required by Django when specifying a custom user model.
     # The `USERNAME_FIELD` property tells us which field we will use to log in.
     # In this case we want it to be the email field.
@@ -154,12 +157,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         return token.decode('utf-8')
 
-class UniUser(AbstractBaseUser):
-    email = models.EmailField(max_length=255, unique=True, verbose_name='電子郵件')
-    is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default=False)
-    jwt_secret = models.UUIDField(default=uuid.uuid4)
-
 # Allowing the REST Framework JWT library to access this new field.
 def jwt_get_secret_key(user_model):
     return user_model.jwt_secret
@@ -172,25 +169,37 @@ class Comments(models.Model):
 
     _id = models.AutoField(unique=True, primary_key=True, verbose_name='評論ID')
     comment_text = models.TextField(blank=True, verbose_name='評論文字')
+    
+    ONE = 1
+    TWO = 2
+    THREE = 3 
+    FOUR = 4
+    FIVE = 5
     RATING_CHOICES = (
-        ('One', '1'),
-        ('Two', '2'),
-        ('Three', '3'),
-        ('Four', '4'),
-        ('Five', '5'),
+        (ONE, 'One'),
+        (TWO, 'Two'),
+        (THREE, 'Three'),
+        (FOUR, 'Four'),
+        (FIVE, 'Five'),
     )
-    rating = models.IntegerField(blank=True, verbose_name='評分')
+    rating = models.IntegerField(default=1,
+        choices=RATING_CHOICES, verbose_name='評分')
+    
+    INTEND = 1
+    READING = 2
+    DONE = 3
     READ_STATUS_CHOICES = (
-        ('Intend', '想讀'),
-        ('Reading', '閱讀中'),
-        ('Done', '已讀完')
+        (INTEND, '想讀'),
+        (READING, '閱讀中'),
+        (DONE, '已讀完')
     )
-    read_status = models.CharField(
-        blank=True, max_length=10, choices=READ_STATUS_CHOICES, verbose_name='閱讀狀態')
+    read_status = models.IntegerField(default=1,
+        choices=READ_STATUS_CHOICES, verbose_name='閱讀狀態')
     created_time = models.DateTimeField(auto_now_add=True, verbose_name='建立時間')
-    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE, verbose_name='用戶ID')
+    updated_at = models.DateTimeField(auto_now=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='用戶ID')
     bookinfo = models.OneToOneField(
-        Bookinfo, null=True, blank=True, on_delete=models.CASCADE, verbose_name='書籍ID')
+        Bookinfo, on_delete=models.CASCADE, verbose_name='書籍ID')
 
 class Bookshelf(models.Model):
     class Meta(object):
@@ -199,6 +208,7 @@ class Bookshelf(models.Model):
 
     _id = models.AutoField(unique=True, primary_key=True, verbose_name='書櫃ID')
     created_time = models.DateTimeField(auto_now_add=True, verbose_name='建立時間')
+    updated_at = models.DateTimeField(auto_now=True)
     bookinfo = models.ForeignKey(
         Bookinfo, null=True, blank=True, on_delete=models.CASCADE, verbose_name='書籍')
     user = models.OneToOneField(

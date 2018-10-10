@@ -1,6 +1,9 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
+    <h2>{{ hello }}</h2>
+    <input type="text" v-model="hello">
+    <input type="checkbox" v-model="toggle">
     <p>
       For guide and recipes on how to configure / customize this project,<br>
       check out the
@@ -10,6 +13,7 @@
     <ul>
       <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
       <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
+      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-unit-mocha" target="_blank" rel="noopener">unit-mocha</a></li>
     </ul>
     <h3>Essential Links</h3>
     <ul>
@@ -33,14 +37,21 @@
 <script>
 export default {
   name: 'HelloWorld',
-  props: {
-    msg: String
+  data () {
+    return {
+      msg: 'welcome to your vue.js app',
+      hello: 'hi',
+      toggle: false,
+    }
   }
+  // props: {
+  //   msg: String
+  // }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
 h3 {
   margin: 40px 0 0;
 }

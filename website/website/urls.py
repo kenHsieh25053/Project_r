@@ -19,6 +19,7 @@ import debug_toolbar
 from rest_framework import routers
 from apps.books.views import BookinfoViewset, AuthorsViewset, TranslatorsViewset
 from apps.accounts.views import CommentsViewset, BookshelfViewset
+from django.views.generic.base import TemplateView
 # from apps.accounts.views import UserLogoutAllView
 
 # Routers provide an easy way of automatically determining the URL conf.
@@ -37,4 +38,5 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('api/', include(router.urls)),
     path('grappelli/', include('grappelli.urls')),  # grappelli URLS
+    path('vue-index/', TemplateView.as_view(template_name='index.html')),
 ]
