@@ -1,12 +1,18 @@
 from rest_framework import views, permissions, status, viewsets
+from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.parsers import JSONParser
 from rest_framework.decorators import permission_classes
 
-from .serializers import CommentsSerializer, BookshelfSerializer
+from .serializers import CommentsSerializer, BookshelfSerializer, UserSerializer
 from .models import Comments, Bookshelf, User
 import uuid
+
+
+@permission_classes((AllowAny,))
+class UserRegisterView(CreateAPIView):
+    serializer_class = UserSerializer
 
 
 class UserLogoutAllView(views.APIView):

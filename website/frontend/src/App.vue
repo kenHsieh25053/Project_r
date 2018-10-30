@@ -6,9 +6,12 @@
 
 <script>
 export default {
-  name: "app"
+  name: "App"
 };
 </script>
 
 <style>
+body {
+  background-color: papayawhip;
+}
 </style>

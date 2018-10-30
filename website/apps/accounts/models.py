@@ -48,6 +48,7 @@ class UserManager(BaseUserManager):
 
         return user
 
+
 class User(AbstractBaseUser, PermissionsMixin):
 
     class Meta:
@@ -64,17 +65,18 @@ class User(AbstractBaseUser, PermissionsMixin):
     # the user anyways, we will also use the email for logging in because it is
     # the most common form of login credential at the time of writing.
     email = models.EmailField(db_index=True, unique=True, verbose_name='電子郵件')
-    user_image = models.ImageField(upload_to='img', verbose_name='用戶圖片', blank=True)
+    user_image = models.ImageField(
+        upload_to='img', verbose_name='用戶圖片', blank=True)
     birthday = models.DateField(blank=True, null=True, verbose_name='生日')
     GENDER_CHOICES = (
-                ('Male', '男'),
-                ('Female', '女')
-        )
+        ('Male', '男'),
+        ('Female', '女')
+    )
     gender = models.CharField(
-        max_length=5, choices=GENDER_CHOICES, null=True, blank=True, verbose_name='性別')
+        max_length=10, choices=GENDER_CHOICES, blank=True, verbose_name='性別')
     location = models.CharField(
-        max_length=255, null=True, blank=True, verbose_name='地區')
-    about = models.TextField(blank=True, null=True, verbose_name='關於我')
+        max_length=255, blank=True, verbose_name='地區')
+    about = models.TextField(blank=True, verbose_name='關於我')
 
     # When a user no longer wishes to use our platform, they may try to delete
     # their account. That's a problem for us because the data we collect is
@@ -97,7 +99,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     #  Using uuid.uuid4() to auto-fill it with a random secret whenever we create a new user.
     jwt_secret = models.UUIDField(default=uuid.uuid4)
-    
+
     # More fields required by Django when specifying a custom user model.
     # The `USERNAME_FIELD` property tells us which field we will use to log in.
     # In this case we want it to be the email field.
@@ -158,6 +160,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         return token.decode('utf-8')
 
 # Allowing the REST Framework JWT library to access this new field.
+
+
 def jwt_get_secret_key(user_model):
     return user_model.jwt_secret
 
@@ -169,10 +173,10 @@ class Comments(models.Model):
 
     _id = models.AutoField(unique=True, primary_key=True, verbose_name='評論ID')
     comment_text = models.TextField(blank=True, verbose_name='評論文字')
-    
+
     ONE = 1
     TWO = 2
-    THREE = 3 
+    THREE = 3
     FOUR = 4
     FIVE = 5
     RATING_CHOICES = (
@@ -183,8 +187,8 @@ class Comments(models.Model):
         (FIVE, 'Five'),
     )
     rating = models.IntegerField(default=1,
-        choices=RATING_CHOICES, verbose_name='評分')
-    
+                                 choices=RATING_CHOICES, verbose_name='評分')
+
     INTEND = 1
     READING = 2
     DONE = 3
@@ -194,12 +198,14 @@ class Comments(models.Model):
         (DONE, '已讀完')
     )
     read_status = models.IntegerField(default=1,
-        choices=READ_STATUS_CHOICES, verbose_name='閱讀狀態')
+                                      choices=READ_STATUS_CHOICES, verbose_name='閱讀狀態')
     created_time = models.DateTimeField(auto_now_add=True, verbose_name='建立時間')
     updated_at = models.DateTimeField(auto_now=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='用戶ID')
+    user = models.OneToOneField(
+        User,  blank=True, on_delete=models.CASCADE, verbose_name='用戶ID')
     bookinfo = models.OneToOneField(
-        Bookinfo, on_delete=models.CASCADE, verbose_name='書籍ID')
+        Bookinfo,  blank=True, on_delete=models.CASCADE, verbose_name='書籍ID')
+
 
 class Bookshelf(models.Model):
     class Meta(object):
@@ -210,6 +216,6 @@ class Bookshelf(models.Model):
     created_time = models.DateTimeField(auto_now_add=True, verbose_name='建立時間')
     updated_at = models.DateTimeField(auto_now=True)
     bookinfo = models.ForeignKey(
-        Bookinfo, null=True, blank=True, on_delete=models.CASCADE, verbose_name='書籍')
+        Bookinfo, blank=True, on_delete=models.CASCADE, verbose_name='書籍')
     user = models.OneToOneField(
-        User, null=True, blank=True, on_delete=models.CASCADE, verbose_name='用戶ID')
+        User, blank=True, on_delete=models.CASCADE, verbose_name='用戶ID')
