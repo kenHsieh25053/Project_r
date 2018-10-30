@@ -1,37 +1,71 @@
 <template>
-<b-navbar toggleable="md" type="dark" variant="info">
+<b-navbar toggleable="md" type="dark" variant="info" fixed>
   <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
   <b-navbar-brand href="#">ReadLand</b-navbar-brand>
   <b-collapse is-nav id="nav_collapse">
     <!-- Right aligned nav items -->
-    <b-navbar-nav class="ml-auto">
+    <b-navbar-nav class="ml-auto">      
       <b-nav-form>
-        <b-form-input size="sm" class="mr-sm-2" type="text" placeholder="Search"/>
-        <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
-      </b-nav-form>
-      <b-nav-item-dropdown text="Lang" right>
-        <b-dropdown-item href="#">EN</b-dropdown-item>
-        <b-dropdown-item href="#">ES</b-dropdown-item>
-        <b-dropdown-item href="#">RU</b-dropdown-item>
-        <b-dropdown-item href="#">FA</b-dropdown-item>
-      </b-nav-item-dropdown>
-      <b-nav-item-dropdown right>
-        <!-- Using button-content slot -->
-        <template slot="button-content">
-          <em>User</em>
-        </template>
-        <b-dropdown-item href="#">Profile</b-dropdown-item>
-        <b-dropdown-item href="#">Signout</b-dropdown-item>
-      </b-nav-item-dropdown>
-    </b-navbar-nav>
+        <b-form-input 
+        size="sm" 
+        class="mr-sm-2"
+        name='email' 
+        type="text"
+        v-model="credentials.email" 
+        placeholder="email"
+        required />
+        <b-form-input 
+        size="sm" 
+        class="mr-sm-2" 
+        name='password'
+        type="text"
+        v-model="credentials.password" 
+        placeholder="password"
+        required autofocus/>
+        <b-button 
+        size="sm" 
+        class="my-2 my-sm-0" 
+        type="submit"
+        @click="login()">
+        login
+        </b-button>
+      </b-nav-form>      
+    </b-navbar-nav>    
+    <b-dropdown variant="link" size="md" id="ddown-right" right no-caret>
+    <template slot="button-content">
+      <v-icon id='info' name="info-circle" scale="2"/>
+    </template>
+    <b-dropdown-item href="#">Forget Password?</b-dropdown-item>
+    <b-dropdown-item href="#">more</b-dropdown-item>
+  </b-dropdown>
   </b-collapse>
 </b-navbar>
-
-
 </template>
 
 <script>
+export default {
+  name: "navbar",
+  data() {
+    return {
+      email: "",
+      password: ""
+    };
+  },
+  methods: {
+    login() {
+      this.$http.plain.post("/register", {
+        email: this.email,
+        password: this.password
+      });
+      // .then(response => this.signinSuccessful(response))
+      // .catch(error => this.signinFailed(error));
+    }
+  }
+};
 </script>
 
 <style>
+#info {
+  color: rgb(255, 253, 253);
+}
 </style>
